@@ -21,12 +21,21 @@ spec:
     params:
     - name: url
       value: $(params.git-url)
-
+  
   - name: build
     taskRef:
       name: build-weather-app
     runAfter:
     - git-clone
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+  
+  - name: deploy
+    taskRef:
+      name: deploy-to-kubernetes
+    runAfter:
+    - build
     workspaces:
     - name: source
       workspace: shared-workspace

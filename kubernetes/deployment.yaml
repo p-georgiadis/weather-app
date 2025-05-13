@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: weather-api
-        image: ${DOCKER_REGISTRY}/weather-api:latest
+        image: node:14-alpine
         ports:
         - containerPort: 3000
