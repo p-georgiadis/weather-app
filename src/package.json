@@ -1,0 +1,13 @@
+{
+  "name": "weather-api",
+  "version": "1.0.0",
+  "description": "Simple weather API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo 'Build complete'"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

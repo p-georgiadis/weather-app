@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-weather-app
+spec:
+  workspaces:
+  - name: source
+  steps:
+  - name: build
+    image: node:14
+    script: |
+      cd $(workspaces.source.path)
+      npm install
+      npm run build
