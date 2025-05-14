@@ -326,6 +326,7 @@ resource "helm_release" "tekton_dashboard" {
 }
 
 # Install Helm upgrade task for Tekton
+# Install Helm upgrade task for Tekton
 resource "kubernetes_manifest" "tekton_helm_task" {
   manifest = {
     apiVersion = "tekton.dev/v1beta1"
@@ -383,7 +384,7 @@ resource "kubernetes_manifest" "tekton_helm_task" {
         {
           name = "helm-upgrade"
           image = "$(params.helm_image)"
-          script = <<EOF
+          script = <<-EOF
             set -e
 
             if [ "$(params.install_only_if_missing)" == "true" ] && [ "$(params.release_name)" != "" ]; then
@@ -396,7 +397,7 @@ resource "kubernetes_manifest" "tekton_helm_task" {
 
             CHART_VALUES_ARGS=""
             for chart_value in $(params.chart_values); do
-              CHART_VALUES_ARGS="${CHART_VALUES_ARGS} --values=${chart_value}"
+              CHART_VALUES_ARGS="$${CHART_VALUES_ARGS} --values=$${chart_value}"
             done
 
             cd $(workspaces.source.path)
@@ -406,12 +407,12 @@ resource "kubernetes_manifest" "tekton_helm_task" {
               helm upgrade --install $(params.release_name) $(params.charts_dir) \
                 --namespace $(params.release_namespace) \
                 --create-namespace \
-                ${CHART_VALUES_ARGS}
+                $${CHART_VALUES_ARGS}
             else
               helm upgrade --install $(params.charts_dir) \
                 --namespace $(params.release_namespace) \
                 --create-namespace \
-                ${CHART_VALUES_ARGS}
+                $${CHART_VALUES_ARGS}
             fi
           EOF
           workingDir = "$(workspaces.source.path)"
@@ -422,6 +423,7 @@ resource "kubernetes_manifest" "tekton_helm_task" {
   }
   depends_on = [helm_release.tekton_pipelines]
 }
+
 resource "aws_iam_policy" "ecr_push_policy" {
   name        = "weather-app-ecr-push-policy"
   description = "Policy to allow pushing to ECR"
