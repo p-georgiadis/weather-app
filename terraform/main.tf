@@ -34,6 +34,7 @@ provider "aws" {
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
 
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
@@ -53,6 +54,7 @@ provider "helm" {
   kubernetes {
     host                   = module.eks.cluster_endpoint
     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+    token                  = data.aws_eks_cluster_auth.cluster.token
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "aws"
@@ -169,6 +171,7 @@ resource "helm_release" "external_secrets" {
 
   depends_on = [kubernetes_namespace.external_secrets]
 }
+
 # Attach required policies to the EKS cluster role
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
@@ -207,6 +210,11 @@ resource "aws_iam_role_policy_attachment" "eks_console_policy" {
 # EBS CSI Driver Policy
 data "aws_iam_policy" "ebs_csi_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+data "aws_eks_cluster_auth" "cluster" {
+  name = module.eks.cluster_name
+  depends_on = [module.eks]
 }
 
 # EKS Cluster with managed node groups
@@ -302,126 +310,13 @@ resource "kubernetes_namespace" "weather_app" {
   depends_on = [module.eks]
 }
 
-# Install Tekton Pipelines using Helm
-resource "helm_release" "tekton_pipelines" {
-  name       = "tekton-pipelines"
-  repository = "https://tektoncd.github.io/charts"
-  chart      = "tekton-pipeline"
-  namespace  = "tekton-pipelines"
-  create_namespace = true
-  version    = "0.5.0"  # Check for the latest version
+# Create Tekton Pipelines namespace
+resource "kubernetes_namespace" "tekton_pipelines" {
+  metadata {
+    name = "tekton-pipelines"
+  }
 
   depends_on = [module.eks]
-}
-
-# Install Tekton Dashboard using Helm
-resource "helm_release" "tekton_dashboard" {
-  name       = "tekton-dashboard"
-  repository = "https://tektoncd.github.io/charts"
-  chart      = "tekton-dashboard"
-  namespace  = "tekton-pipelines"
-  version    = "0.5.0"  # Check for the latest version
-
-  depends_on = [helm_release.tekton_pipelines]
-}
-
-# Install Helm upgrade task for Tekton
-# Install Helm upgrade task for Tekton
-resource "kubernetes_manifest" "tekton_helm_task" {
-  manifest = {
-    apiVersion = "tekton.dev/v1beta1"
-    kind       = "Task"
-    metadata = {
-      name      = "helm-upgrade-from-source"
-      namespace = "tekton-pipelines"
-    }
-    spec = {
-      workspaces = [
-        {
-          name = "source"
-          description = "The workspace consisting of helm chart."
-        }
-      ]
-      params = [
-        {
-          name = "charts_dir"
-          description = "The directory in source that contains the helm chart"
-          type = "string"
-          default = "."
-        },
-        {
-          name = "release_name"
-          description = "The name of the helm release"
-          type = "string"
-          default = ""
-        },
-        {
-          name = "release_namespace"
-          description = "The namespace of the helm release"
-          type = "string"
-          default = "default"
-        },
-        {
-          name = "install_only_if_missing"
-          description = "If true, install will be performed only if the release is not already present"
-          type = "string"
-          default = "false"
-        },
-        {
-          name = "helm_image"
-          description = "The helmImage to run this task"
-          type = "string"
-          default = "alpine/helm:3.11.1"
-        },
-        {
-          name = "chart_values"
-          description = "Additional chart values to be passed to helm upgrade command"
-          type = "array"
-          default = []
-        }
-      ]
-      steps = [
-        {
-          name = "helm-upgrade"
-          image = "$(params.helm_image)"
-          script = <<-EOF
-            set -e
-
-            if [ "$(params.install_only_if_missing)" == "true" ] && [ "$(params.release_name)" != "" ]; then
-              HELM_RELEASE=$(helm list --namespace $(params.release_namespace) --filter "^$(params.release_name)$" --output json 2>/dev/null)
-              if [ "$HELM_RELEASE" != "[]" ]; then
-                echo "Helm release $(params.release_name) already exists in namespace $(params.release_namespace)"
-                exit 0
-              fi
-            fi
-
-            CHART_VALUES_ARGS=""
-            for chart_value in $(params.chart_values); do
-              CHART_VALUES_ARGS="$${CHART_VALUES_ARGS} --values=$${chart_value}"
-            done
-
-            cd $(workspaces.source.path)
-            helm dependency update $(params.charts_dir)
-
-            if [ "$(params.release_name)" != "" ]; then
-              helm upgrade --install $(params.release_name) $(params.charts_dir) \
-                --namespace $(params.release_namespace) \
-                --create-namespace \
-                $${CHART_VALUES_ARGS}
-            else
-              helm upgrade --install $(params.charts_dir) \
-                --namespace $(params.release_namespace) \
-                --create-namespace \
-                $${CHART_VALUES_ARGS}
-            fi
-          EOF
-          workingDir = "$(workspaces.source.path)"
-          volumeMounts = []
-        }
-      ]
-    }
-  }
-  depends_on = [helm_release.tekton_pipelines]
 }
 
 resource "aws_iam_policy" "ecr_push_policy" {
@@ -462,6 +357,8 @@ resource "kubernetes_service_account" "tekton_sa" {
       "eks.amazonaws.com/role-arn" = module.irsa_tekton_ecr.iam_role_arn
     }
   }
+
+  depends_on = [kubernetes_namespace.tekton_pipelines]
 }
 
 # Create a PVC for Tekton pipelines workspace
@@ -480,13 +377,11 @@ resource "kubernetes_persistent_volume_claim" "tekton_workspace_pvc" {
       }
     }
 
-    storage_class_name = "gp2"  # Using same storage class as your app
+    storage_class_name = "gp3"  # Changed from gp2 to gp3 for better performance
   }
 
   # Make sure the namespace exists before creating the PVC
-  depends_on = [
-    helm_release.tekton_pipelines
-  ]
+  depends_on = [kubernetes_namespace.tekton_pipelines]
 }
 
 module "irsa_tekton_ecr" {

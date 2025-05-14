@@ -100,13 +100,29 @@ export ECR_REPO=$(terraform output -raw ecr_repository_url)
 aws eks update-kubeconfig --region eu-north-1 --name $CLUSTER_NAME
 ```
 
-### Step 3: Install Required Tekton Tasks
+### Step 3: Install Tekton Components
 
 ```bash
-# Install the git-clone ClusterTask
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.9/git-clone.yaml
-```
+# Create namespaces (if not created by Terraform)
+kubectl create namespace tekton-pipelines --dry-run=client -o yaml | kubectl apply -f -
 
+# Add Tekton Charts repository
+helm repo add tektoncd https://tektoncd.github.io/charts
+
+# Update Helm repositories
+helm repo update
+
+# Install Tekton Pipelines
+helm install tekton-pipelines tektoncd/tekton-pipeline -n tekton-pipelines
+
+# Install Tekton Dashboard
+helm install tekton-dashboard tektoncd/tekton-dashboard -n tekton-pipelines
+
+# Install Tekton Tasks
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.9/git-clone.yaml
+kubectl apply -f https://api.hub.tekton.dev/v1/resource/tekton/task/helm-upgrade-from-source/0.3/raw
+kubectl apply -f https://api.hub.tekton.dev/v1/resource/tekton/task/kaniko/0.6/raw
+```
 ### Step 4: Build and Push Docker Image
 
 ```bash

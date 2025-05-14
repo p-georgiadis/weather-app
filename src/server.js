@@ -284,5 +284,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Weather App running on port ${port}`);
   console.log(`Open your browser and visit: http://localhost:${port}`);
-  console.log(`Using OpenWeatherMap API Key: ${WEATHER_API_KEY}`);
+  console.log(`Using OpenWeatherMap API Key: ${WEATHER_API_KEY ? '****' : 'not set'}`);
 });
