@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/air-quality.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Forecast</h1>
+        
+        <div class="search-container">
+            <input type="text" id="city-input" placeholder="Enter city name...">
+            <button id="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+        
+        <div class="weather-container">
+            <div class="weather-info hidden" id="weather-info">
+                <div class="location">
+                    <h2 id="location">Stockholm</h2>
+                    <p id="date">Monday, May 14</p>
+                </div>
+                
+                <div class="weather-details">
+                    <div class="temperature">
+                        <h2 id="temperature">23°C</h2>
+                        <div class="weather-icon">
+                            <i id="weather-icon" class="fas fa-sun"></i>
+                        </div>
+                    </div>
+                    <div class="conditions">
+                        <p id="conditions">Sunny</p>
+                    </div>
+                </div>
+
+                <div class="additional-info">
+                    <div class="info-item">
+                        <i class="fas fa-wind"></i>
+                        <span>Wind Speed</span>
+                        <p id="wind-speed">5 km/h</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-tint"></i>
+                        <span>Humidity</span>
+                        <p id="humidity">45%</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-temperature-low"></i>
+                        <span>Feels Like</span>
+                        <p id="feels-like">25°C</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading weather data...</p>
+            </div>
+            
+            <div class="error-message" id="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>City not found. Please try again.</p>
+            </div>
+        </div>
+        
+        <div class="forecast-container" id="forecast-container">
+            <!-- Forecast items will be added here via JavaScript -->
+        </div>
+        
+        <!-- Air Quality Component -->
+        <div class="air-quality-container hidden" id="air-quality-container">
+            <h2>Air Quality</h2>
+            <div class="air-quality-card">
+                <div class="air-quality-header">
+                    <div class="air-quality-index">
+                        <span class="aqi-label">Air Quality Index:</span>
+                        <span class="aqi-value" id="aqi-value">--</span>
+                        <span class="aqi-description" id="aqi-description">Loading...</span>
+                    </div>
+                </div>
+                <div class="air-quality-details">
+                    <div class="pollutant-item">
+                        <i class="fas fa-smog"></i>
+                        <span>Carbon Monoxide (CO)</span>
+                        <p id="co-value">-- μg/m³</p>
+                    </div>
+                    <div class="pollutant-item">
+                        <i class="fas fa-radiation"></i>
+                        <span>Nitrogen Dioxide (NO₂)</span>
+                        <p id="no2-value">-- μg/m³</p>
+                    </div>
+                    <div class="pollutant-item">
+                        <i class="fas fa-cloud"></i>
+                        <span>Ozone (O₃)</span>
+                        <p id="o3-value">-- μg/m³</p>
+                    </div>
+                    <div class="pollutant-item">
+                        <i class="fas fa-cloud-rain"></i>
+                        <span>Fine Particles (PM2.5)</span>
+                        <p id="pm25-value">-- μg/m³</p>
+                    </div>
+                    <div class="pollutant-item">
+                        <i class="fas fa-cloud-rain"></i>
+                        <span>Coarse Particles (PM10)</span>
+                        <p id="pm10-value">-- μg/m³</p>
+                    </div>
+                    <div class="pollutant-item">
+                        <i class="fas fa-smog"></i>
+                        <span>Sulfur Dioxide (SO₂)</span>
+                        <p id="so2-value">-- μg/m³</p>
+                    </div>
+                </div>
+            </div>
+            <div class="aqi-legend">
+                <div class="legend-item" style="background-color: #90EE90;">
+                    <span>Good</span>
+                </div>
+                <div class="legend-item" style="background-color: #FFFF00;">
+                    <span>Fair</span>
+                </div>
+                <div class="legend-item" style="background-color: #FFA500;">
+                    <span>Moderate</span>
+                </div>
+                <div class="legend-item" style="background-color: #FF0000;">
+                    <span>Poor</span>
+                </div>
+                <div class="legend-item" style="background-color: #800080;">
+                    <span>Very Poor</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Weather App - Simple Weather Forecast</p>
+    </footer>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>

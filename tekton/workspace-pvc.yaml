@@ -1,0 +1,13 @@
+# tekton/workspace-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: weather-app-workspace
+  namespace: tekton-pipelines
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: gp2
+  resources:
+    requests:
+      storage: 4Gi

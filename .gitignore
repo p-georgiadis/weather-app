@@ -1,4 +1,73 @@
+# Node.js
 node_modules/
-.terraform
-*.tfstate*
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.npm/
+package-lock.json
+*.log
+logs/
+coverage/
 
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfstate.*.backup
+.terraform.tfstate.lock.info
+.terraform.lock.hcl
+*.tfvars
+*.tfvars.json
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+*.crt
+
+# IDE/Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+.history/
+
+# AWS
+.aws/
+credentials
+.aws-credentials
+
+# Kubernetes
+kubeconfig
+.kube/
+helmchart-values-*.yaml
+
+# Build/Dist
+dist/
+build/
+.cache/
+tmp/
+temp/
+
+# Logs
+*.log
+logs/
+
+# Misc
+.DS_Store
+Thumbs.db

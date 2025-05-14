@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-app
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: weather-app
+    tier: frontend
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: weather-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: weather-app
+        tier: frontend
+    spec:
+      containers:
+        - name: weather-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+              name: http
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "{{ .Values.service.targetPort | toString }}"
+            - name: WEATHER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: weather-api-key
+                  key: WEATHER_API_KEY
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: weather-data
+              mountPath: /app/data
+      volumes:
+        - name: weather-data
+          persistentVolumeClaim:
+            claimName: weather-data-pvc

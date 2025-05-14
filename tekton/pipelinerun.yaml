@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: weather-app-pipeline-run
+  namespace: tekton-pipelines
+spec:
+  pipelineRef:
+    name: weather-app-pipeline
+  workspaces:
+    - name: shared-workspace
+      persistentVolumeClaim:
+        claimName: weather-app-workspace
+  params:
+    - name: git-url
+      value: "https://github.com/p-georgiadis/weather-app.git"
+    - name: git-revision
+      value: "main"
+    - name: image-name
+      value: "595965639663.dkr.ecr.eu-north-1.amazonaws.com/weather-app:latest"

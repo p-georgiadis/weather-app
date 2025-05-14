@@ -2,40 +2,62 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: weather-app-pipeline
+  namespace: tekton-pipelines
 spec:
   workspaces:
-  - name: shared-workspace
+    - name: shared-workspace
   params:
-  - name: git-url
-    type: string
-  - name: image-tag
-    type: string
+    - name: git-url
+      type: string
+      description: URL of the git repo
+    - name: git-revision
+      type: string
+      description: Revision to checkout (branch, tag, sha, ref…)
+      default: main
+    - name: image-name
+      type: string
+      description: Name of the image to build
   tasks:
-  - name: git-clone
-    taskRef:
-      name: git-clone
-      kind: ClusterTask
-    workspaces:
-    - name: output
-      workspace: shared-workspace
-    params:
-    - name: url
-      value: $(params.git-url)
-  
-  - name: build
-    taskRef:
-      name: build-weather-app
-    runAfter:
-    - git-clone
-    workspaces:
-    - name: source
-      workspace: shared-workspace
-  
-  - name: deploy
-    taskRef:
-      name: deploy-to-kubernetes
-    runAfter:
-    - build
-    workspaces:
-    - name: source
-      workspace: shared-workspace
+    - name: fetch-source
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: revision
+          value: $(params.git-revision)
+    - name: build-image
+      taskRef:
+        name: kaniko-ecr
+        kind: Task
+      serviceAccountName: tekton-build-sa
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: $(params.image-name)
+      runAfter:
+        - fetch-source
+    - name: deploy
+      taskRef:
+        name: helm-upgrade-from-source
+        kind: Task
+      params:
+        - name: charts_dir
+          value: "./weather-app-chart"
+        - name: release_name
+          value: "weather-app"
+        - name: release_namespace
+          value: "weather-app"
+        - name: install_only_if_missing
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - build-image

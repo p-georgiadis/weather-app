@@ -1,0 +1,28 @@
+# tekton/kaniko-ecr-task.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: kaniko-ecr
+  namespace: tekton-pipelines
+spec:
+  workspaces:
+    - name: source
+  params:
+    - name: IMAGE
+      description: Name of the image to build
+  steps:
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor:v1.9.0-debug
+      env:
+        - name: AWS_SDK_LOAD_CONFIG
+          value: "true"
+      command:
+        - /kaniko/executor
+      args:
+        - --dockerfile=src/Dockerfile
+        - --context=$(workspaces.source.path)
+        - --destination=$(params.IMAGE)
+        - --oci-layout-path=$(workspaces.source.path)/image-digest
+        - --aws
+      securityContext:
+        runAsUser: 0

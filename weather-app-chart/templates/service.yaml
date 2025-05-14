@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: weather-app
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: weather-app
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    app: weather-app

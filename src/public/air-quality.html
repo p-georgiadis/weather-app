@@ -1,0 +1,62 @@
+<!-- Air Quality Component -->
+<div class="air-quality-container hidden" id="air-quality-container">
+    <h2>Air Quality</h2>
+    <div class="air-quality-card">
+        <div class="air-quality-header">
+            <div class="air-quality-index">
+                <span class="aqi-label">Air Quality Index:</span>
+                <span class="aqi-value" id="aqi-value">--</span>
+                <span class="aqi-description" id="aqi-description">Loading...</span>
+            </div>
+        </div>
+        <div class="air-quality-details">
+            <div class="pollutant-item">
+                <i class="fas fa-smog"></i>
+                <span>Carbon Monoxide (CO)</span>
+                <p id="co-value">-- μg/m³</p>
+            </div>
+            <div class="pollutant-item">
+                <i class="fas fa-radiation"></i>
+                <span>Nitrogen Dioxide (NO₂)</span>
+                <p id="no2-value">-- μg/m³</p>
+            </div>
+            <div class="pollutant-item">
+                <i class="fas fa-cloud"></i>
+                <span>Ozone (O₃)</span>
+                <p id="o3-value">-- μg/m³</p>
+            </div>
+            <div class="pollutant-item">
+                <i class="fas fa-cloud-rain"></i>
+                <span>Fine Particles (PM2.5)</span>
+                <p id="pm25-value">-- μg/m³</p>
+            </div>
+            <div class="pollutant-item">
+                <i class="fas fa-cloud-rain"></i>
+                <span>Coarse Particles (PM10)</span>
+                <p id="pm10-value">-- μg/m³</p>
+            </div>
+            <div class="pollutant-item">
+                <i class="fas fa-smog"></i>
+                <span>Sulfur Dioxide (SO₂)</span>
+                <p id="so2-value">-- μg/m³</p>
+            </div>
+        </div>
+    </div>
+    <div class="aqi-legend">
+        <div class="legend-item" style="background-color: #90EE90;">
+            <span>Good</span>
+        </div>
+        <div class="legend-item" style="background-color: #FFFF00;">
+            <span>Fair</span>
+        </div>
+        <div class="legend-item" style="background-color: #FFA500;">
+            <span>Moderate</span>
+        </div>
+        <div class="legend-item" style="background-color: #FF0000;">
+            <span>Poor</span>
+        </div>
+        <div class="legend-item" style="background-color: #800080;">
+            <span>Very Poor</span>
+        </div>
+    </div>
+</div>
