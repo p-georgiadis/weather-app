@@ -8,7 +8,14 @@ package-lock.json
 *.log
 logs/
 coverage/
-
+# Yarn / Node.js
+node_modules/
+yarn-error.log
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
 # Terraform
 .terraform/
 terraform.tfstate

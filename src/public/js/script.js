@@ -248,3 +248,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize with air quality data for default city
     getWeather('Stockholm');
 });
+// Server info functionality
+const serverInfoToggle = document.getElementById('server-info-toggle');
+const serverInfoPanel = document.getElementById('server-info-panel');
+const serverHostname = document.getElementById('server-hostname');
+const serverPod = document.getElementById('server-pod');
+const serverNode = document.getElementById('server-node');
+const serverNamespace = document.getElementById('server-namespace');
+const serverTime = document.getElementById('server-time');
+
+serverInfoToggle.addEventListener('click', () => {
+    serverInfoPanel.classList.toggle('hidden');
+    fetchServerInfo();
+});
+
+async function fetchServerInfo() {
+    try {
+        const response = await fetch('/api/server-info');
+        if (response.ok) {
+            const data = await response.json();
+
+            serverHostname.textContent = data.hostname;
+            serverPod.textContent = data.podName;
+            serverNode.textContent = data.nodeName;
+            serverNamespace.textContent = data.namespace;
+            serverTime.textContent = new Date(data.timestamp).toLocaleString();
+        }
+    } catch (error) {
+        console.error('Error fetching server info:', error);
+        serverHostname.textContent = 'Error fetching data';
+    }
+}
+
+// Fetch server info every 10 seconds when panel is visible
+setInterval(() => {
+    if (!serverInfoPanel.classList.contains('hidden')) {
+        fetchServerInfo();
+    }
+}, 10000);

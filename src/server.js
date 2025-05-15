@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const axios = require('axios');
 const cors = require('cors');
+const os = require('os');
 
 // Load environment variables from .env file in development mode
 if (process.env.NODE_ENV !== 'production') {
@@ -14,6 +15,29 @@ const port = process.env.PORT || 8080;
 // Get API key from environment variable
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const WEATHER_API_BASE_URL = 'https://api.openweathermap.org/data/2.5';
+
+// Get hostname and Kubernetes info
+const hostname = os.hostname();
+const podName = process.env.POD_NAME || 'local';
+const nodeName = process.env.NODE_NAME || 'local';
+const namespace = process.env.POD_NAMESPACE || 'local';
+
+// Add server info to all responses
+app.use((req, res, next) => {
+  res.locals.serverInfo = {
+    hostname,
+    podName,
+    nodeName,
+    namespace,
+    timestamp: new Date().toISOString()
+  };
+  next();
+});
+
+// Create an API endpoint to return server info
+app.get('/api/server-info', (req, res) => {
+  res.json(res.locals.serverInfo);
+});
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));

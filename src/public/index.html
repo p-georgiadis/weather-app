@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/air-quality.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/server-info.css">
 </head>
 <body>
     <div class="container">
@@ -135,9 +136,24 @@
     </div>
     
     <footer>
-        <p>&copy; 2025 Weather App - Simple Weather Forecast</p>
+        <p>&copy; 2025 Weather App - Panagiotis S. Georgiadis</p>
     </footer>
-    
+
+    <div class="server-info-container">
+        <div class="server-info">
+            <div class="server-info-toggle" id="server-info-toggle">
+                <i class="fas fa-server"></i>
+            </div>
+            <div class="server-info-panel hidden" id="server-info-panel">
+                <h3>Server Information</h3>
+                <p><strong>Hostname:</strong> <span id="server-hostname">Loading...</span></p>
+                <p><strong>Pod:</strong> <span id="server-pod">Loading...</span></p>
+                <p><strong>Node:</strong> <span id="server-node">Loading...</span></p>
+                <p><strong>Namespace:</strong> <span id="server-namespace">Loading...</span></p>
+                <p><strong>Time:</strong> <span id="server-time">Loading...</span></p>
+            </div>
+        </div>
+    </div>
     <script src="js/script.js"></script>
 </body>
 </html>
