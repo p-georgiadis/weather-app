@@ -1,3 +1,4 @@
+/* Original styles kept */
 * {
     margin: 0;
     padding: 0;
@@ -13,6 +14,8 @@
     --text-color: #333333;
     --border-radius: 12px;
     --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --card-hover-transform: translateY(-5px);
+    --transition-speed: 0.3s;
 }
 
 body {
@@ -21,6 +24,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 .container {
@@ -34,12 +38,14 @@ h1 {
     text-align: center;
     margin-bottom: 30px;
     color: var(--primary-color);
+    transition: color var(--transition-speed);
 }
 
 .search-container {
     display: flex;
     margin-bottom: 30px;
     justify-content: center;
+    position: relative;
 }
 
 #city-input {
@@ -49,6 +55,7 @@ h1 {
     border-radius: var(--border-radius) 0 0 var(--border-radius);
     font-size: 16px;
     outline: none;
+    transition: border-color var(--transition-speed), background-color var(--transition-speed), color var(--transition-speed);
 }
 
 #search-btn {
@@ -58,7 +65,7 @@ h1 {
     border: none;
     border-radius: 0 var(--border-radius) var(--border-radius) 0;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color var(--transition-speed);
 }
 
 #search-btn:hover {
@@ -71,6 +78,9 @@ h1 {
     box-shadow: var(--box-shadow);
     padding: 25px;
     margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 .weather-info {
@@ -110,11 +120,13 @@ h1 {
 .temperature h2 {
     font-size: 48px;
     color: var(--primary-color);
+    transition: color var(--transition-speed);
 }
 
 .weather-icon {
     font-size: 36px;
     color: var(--primary-color);
+    transition: color var(--transition-speed);
 }
 
 .conditions {
@@ -137,12 +149,14 @@ h1 {
     background-color: rgba(52, 152, 219, 0.1);
     border-radius: var(--border-radius);
     margin: 5px;
+    transition: background-color var(--transition-speed);
 }
 
 .info-item i {
     font-size: 22px;
     color: var(--primary-color);
     margin-bottom: 8px;
+    transition: color var(--transition-speed);
 }
 
 .info-item span {
@@ -163,6 +177,21 @@ h1 {
     gap: 15px;
     padding: 10px 0;
     margin-bottom: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+.forecast-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.forecast-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.forecast-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 6px;
 }
 
 .forecast-item {
@@ -173,6 +202,11 @@ h1 {
     padding: 15px;
     text-align: center;
     flex: 1;
+    transition: transform var(--transition-speed), background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.forecast-item:hover {
+    transform: var(--card-hover-transform);
 }
 
 .forecast-item .day {
@@ -197,6 +231,7 @@ h1 {
     font-size: 24px;
     color: var(--primary-color);
     margin: 8px 0;
+    transition: color var(--transition-speed);
 }
 
 .forecast-item .forecast-condition {
@@ -207,11 +242,12 @@ h1 {
 
 .forecast-item .forecast-pop {
     font-size: 14px;
-    color: #3498db;
+    color: var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
+    transition: color var(--transition-speed);
 }
 
 .loading, .error-message {
@@ -223,6 +259,7 @@ h1 {
     font-size: 40px;
     color: var(--primary-color);
     margin-bottom: 15px;
+    transition: color var(--transition-speed);
 }
 
 .error-message i {
@@ -244,6 +281,7 @@ footer {
     background-color: var(--card-bg-color);
     color: #777;
     margin-top: auto;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 /* Responsive styles */
@@ -252,31 +290,415 @@ footer {
         padding: 15px;
         margin: 15px auto;
     }
-    
+
     #city-input {
         width: 65%;
     }
-    
+
     .weather-details {
         flex-direction: column;
         gap: 15px;
     }
-    
+
     .temperature {
         justify-content: center;
     }
-    
+
     .conditions {
         margin-left: 0;
         text-align: center;
     }
-    
+
     .additional-info {
         flex-direction: column;
         gap: 10px;
     }
-    
+
     .info-item {
         margin: 5px 0;
     }
+}
+
+/* NEW STYLES FOR ENHANCED FEATURES */
+
+/* Dark mode styles */
+.dark-mode {
+    --primary-color: #64b5f6;
+    --secondary-color: #2196f3;
+    --background-color: #1f2937;
+    --card-bg-color: #374151;
+    --text-color: #f3f4f6;
+}
+
+.dark-mode #city-input {
+    background-color: #2c3e50;
+    border-color: #455a64;
+    color: #f3f4f6;
+}
+
+.dark-mode .info-item {
+    background-color: rgba(100, 181, 246, 0.1);
+}
+
+.dark-mode .location p,
+.dark-mode .forecast-item .date,
+.dark-mode .forecast-item .forecast-condition,
+.dark-mode .air-quality-container .aqi-label,
+.dark-mode .air-quality-container .pollutant-item span {
+    color: #a9b3c1;
+}
+
+/* Toggle switches for dark mode and temperature unit */
+.toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 20px;
+}
+
+.toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggle-label {
+    font-size: 14px;
+    color: var(--text-color);
+    transition: color var(--transition-speed);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: var(--transition-speed);
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: var(--transition-speed);
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--primary-color);
+}
+
+.toggle-switch input:focus + .toggle-slider {
+    box-shadow: 0 0 1px var(--primary-color);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+/* Extra buttons in search area */
+.search-extras {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#geolocate-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+#geolocate-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+#save-location-btn {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+#save-location-btn:hover {
+    background-color: #27ae60;
+}
+
+/* Saved locations styling */
+.saved-locations-container {
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    margin-bottom: 30px;
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.saved-locations-title {
+    font-size: 18px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    text-align: center;
+    transition: color var(--transition-speed);
+}
+
+.saved-location {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(52, 152, 219, 0.1);
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-speed);
+}
+
+.dark-mode .saved-location {
+    background-color: rgba(100, 181, 246, 0.1);
+}
+
+.saved-location span {
+    font-size: 16px;
+}
+
+.location-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.location-btn, .remove-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: background-color var(--transition-speed);
+}
+
+.location-btn {
+    color: var(--primary-color);
+}
+
+.remove-btn {
+    color: #e74c3c;
+}
+
+.location-btn:hover, .remove-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .location-btn:hover, .dark-mode .remove-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.empty-locations-message {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 10px;
+}
+
+/* Hourly forecast styling */
+.hourly-forecast-container {
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    margin-bottom: 30px;
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.hourly-header {
+    font-size: 18px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    text-align: center;
+    transition: color var(--transition-speed);
+}
+
+.hourly-items-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 5px 0 15px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+.hourly-items-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.hourly-items-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.hourly-items-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 6px;
+}
+
+.hourly-item {
+    min-width: 100px;
+    background-color: rgba(52, 152, 219, 0.1);
+    border-radius: var(--border-radius);
+    padding: 12px;
+    text-align: center;
+    transition: transform var(--transition-speed), background-color var(--transition-speed);
+}
+
+.hourly-item:hover {
+    transform: var(--card-hover-transform);
+}
+
+.dark-mode .hourly-item {
+    background-color: rgba(100, 181, 246, 0.1);
+}
+
+.hourly-time {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.hourly-icon {
+    font-size: 20px;
+    color: var(--primary-color);
+    margin: 5px 0;
+    transition: color var(--transition-speed);
+}
+
+.hourly-temp {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.hourly-condition {
+    font-size: 12px;
+    color: #777;
+}
+
+.dark-mode .hourly-condition {
+    color: #a9b3c1;
+}
+
+.hourly-error {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+}
+
+/* Toast notifications */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.toast {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    max-width: 300px;
+    text-align: center;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dark-mode .toast {
+    background-color: rgba(100, 181, 246, 0.9);
+    color: #1f2937;
+}
+
+/* Weather effect animations */
+.weather-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Scrollbar styling for all scrollable containers */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Card hover effects for all cards */
+.weather-container:hover,
+.forecast-item:hover,
+.hourly-item:hover,
+.saved-location:hover,
+.air-quality-container:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .weather-container:hover,
+.dark-mode .forecast-item:hover,
+.dark-mode .hourly-item:hover,
+.dark-mode .saved-location:hover,
+.dark-mode .air-quality-container:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }

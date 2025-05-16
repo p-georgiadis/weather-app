@@ -310,3 +310,61 @@ app.listen(port, () => {
   console.log(`Open your browser and visit: http://localhost:${port}`);
   console.log(`Using OpenWeatherMap API Key: ${WEATHER_API_KEY ? '****' : 'not set'}`);
 });
+
+app.get('/api/weather/coordinates', async (req, res) => {
+  const lat = req.query.lat;
+  const lon = req.query.lon;
+
+  if (!lat || !lon) {
+    return res.status(400).json({ error: 'Missing lat or lon parameters' });
+  }
+
+  try {
+    // Get weather data by coordinates
+    const response = await axios.get(`${WEATHER_API_BASE_URL}/weather`, {
+      params: {
+        lat: lat,
+        lon: lon,
+        appid: WEATHER_API_KEY,
+        units: 'metric'
+      }
+    });
+
+    const data = response.data;
+
+    // Format the response
+    const weatherData = {
+      location: data.name,
+      country: data.sys.country,
+      temperature: Math.round(data.main.temp),
+      feels_like: Math.round(data.main.feels_like),
+      humidity: data.main.humidity,
+      wind_speed: Math.round(data.wind.speed * 3.6), // Convert m/s to km/h
+      conditions: data.weather[0].main,
+      description: data.weather[0].description,
+      icon: data.weather[0].icon,
+      sunrise: data.sys.sunrise,
+      sunset: data.sys.sunset,
+      pressure: data.main.pressure,
+      visibility: data.visibility,
+      coordinates: {
+        lat: data.coord.lat,
+        lon: data.coord.lon
+      }
+    };
+
+    res.json(weatherData);
+  } catch (error) {
+    console.error('Error fetching weather data by coordinates:', error.message);
+    res.status(500).json({ error: 'Failed to fetch weather data' });
+  }
+});
+
+// Serve the manifest and service worker files
+app.get('/manifest.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
+});
+
+app.get('/service-worker.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'service-worker.js'));
+});

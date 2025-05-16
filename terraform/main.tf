@@ -454,17 +454,17 @@ resource "helm_release" "tekton_dashboard" {
 }
 
 resource "kubernetes_manifest" "git_clone_task" {
-  manifest = yamldecode(file("${path.module}/tekton/git-clone-task.yaml"))
+  manifest = yamldecode(file("${path.module}/../tekton/git-clone-task.yaml"))
   depends_on = [helm_release.tekton_pipelines]
 }
 
 resource "kubernetes_manifest" "helm_upgrade_task" {
-  manifest = yamldecode(file("${path.module}/tekton/helm-upgrade-task.yaml"))
+  manifest = yamldecode(file("${path.module}/../tekton/helm-upgrade-task.yaml"))
   depends_on = [helm_release.tekton_pipelines]
 }
 
 resource "kubernetes_manifest" "kaniko_ecr_task" {
-  manifest = yamldecode(file("${path.module}/tekton/kaniko-ecr-task.yaml"))
+  manifest = yamldecode(file("${path.module}/../tekton/kaniko-ecr-task.yaml"))
   depends_on = [helm_release.tekton_pipelines]
 }
 
