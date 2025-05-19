@@ -34,7 +34,6 @@ spec:
       taskRef:
         name: kaniko-ecr
         kind: Task
-      serviceAccountName: tekton-build-sa
       workspaces:
         - name: source
           workspace: shared-workspace
@@ -49,7 +48,7 @@ spec:
         - fetch-source
     - name: deploy
       taskRef:
-        name: helm-upgrade-from-source
+        name: helm-upgrade
         kind: Task
       params:
         - name: charts_dir
@@ -58,8 +57,8 @@ spec:
           value: "weather-app"
         - name: release_namespace
           value: "weather-app"
-        - name: install_only_if_missing
-          value: "false"
+        - name: upgrade_extra_params
+          value: "--install"
       workspaces:
         - name: source
           workspace: shared-workspace

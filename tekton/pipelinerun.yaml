@@ -6,6 +6,7 @@ metadata:
 spec:
   pipelineRef:
     name: weather-app-pipeline
+  serviceAccountName: tekton-build-sa
   workspaces:
     - name: shared-workspace
       persistentVolumeClaim:

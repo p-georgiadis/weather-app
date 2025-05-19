@@ -1,12 +1,13 @@
 replicaCount: 2
 
 image:
-  repository: 
+  repository: 595965639663.dkr.ecr.eu-north-1.amazonaws.com/weather-app
   tag: latest
   pullPolicy: Always
 
+# The ServiceAccount is now created by the infrastructure chart
 serviceAccount:
-  roleArn: "arn:aws:iam::595965639663:role/weather-app-secrets-role"
+  name: weather-app-sa
 
 service:
   type: LoadBalancer

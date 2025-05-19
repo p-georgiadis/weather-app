@@ -143,15 +143,6 @@ This application provides real-time weather information for cities around the wo
     └── values.yaml          # Configurable values
 ```
 
-## Deployment Guide
-
-### Prerequisites
-- AWS CLI configured with appropriate permissions
-- kubectl installed
-- Helm installed
-- Terraform installed
-
-# Updated README.md Section
 
 ### Step 1: Deploy Infrastructure with Terraform
 
@@ -161,16 +152,28 @@ cd terraform
 terraform init
 terraform apply
 
-# Save important outputs
-export CLUSTER_NAME=$(terraform output -raw cluster_name)
-export ECR_REPO=$(terraform output -raw ecr_repository_url)
+# Move back to project root directory
+cd ..
+
+# Save ECR repository URL for later use
+export ECR_REPO=$(terraform -chdir=terraform output -raw ecr_repository_url)
 ```
 
-### Step 2: Configure kubectl for EKS
+### Step 2: Set Up Kubernetes Resources
+
+This script sets up all the necessary Kubernetes resources, including:
+- Required namespaces (external-secrets, weather-app, tekton-pipelines)
+- Service accounts with proper IAM role annotations
+- StorageClasses and persistent volume claims
+- Tekton Pipelines, Dashboard, and External Secrets Operator
+- Security settings for pod execution
 
 ```bash
-# Configure kubectl to work with your EKS cluster
-aws eks update-kubeconfig --region eu-north-1 --name $CLUSTER_NAME
+# Make the script executable
+chmod +x setup-kubernetes.sh
+
+# Run the setup script
+./setup-kubernetes.sh
 ```
 
 ### Step 3: Build and Push Docker Image
@@ -217,6 +220,47 @@ kubectl apply -f tekton/pipelinerun.yaml
 kubectl get svc -n weather-app weather-app
 ```
 
+## Monitoring and Maintenance
+
+To check the status of your application:
+
+```bash
+# Check pod status
+kubectl get pods -n weather-app
+
+# View application logs
+kubectl logs -n weather-app -l app=weather-app
+
+# Check pipeline status
+kubectl get pipelinerun -n tekton-pipelines
+```
+
+To update the application:
+
+```bash
+# Make your code changes
+# Build and push a new image (repeat Step 3)
+# Update the deployment
+helm upgrade weather-app ./weather-app-chart -n weather-app
+```
+
+## Cleanup
+
+To delete all resources:
+
+```bash
+# Delete the application
+helm uninstall weather-app -n weather-app
+
+# Delete the pipelines
+kubectl delete -f tekton/pipelinerun.yaml
+kubectl delete -f tekton/pipeline.yaml
+
+# Delete the namespaces
+kubectl delete namespace weather-app
+kubectl delete namespace tekton-pipelines
+kubectl delete namespace external-secrets
+```
 
 ## Note on Infrastructure
 
@@ -291,5 +335,3 @@ The Tekton pipeline automates:
 - Implement blue/green deployments
 
 ## License
-
-MIT
