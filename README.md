@@ -1,5 +1,5 @@
 # Weather App
-
+Panagiotis 'Pano' Georgiadis
 A comprehensive weather application built with Node.js and Express, deployed on AWS EKS using Terraform with Kubernetes, Helm, and Tekton CI/CD.
 
 ## Cloud-Native Best Practices
